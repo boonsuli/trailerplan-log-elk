@@ -129,7 +129,7 @@ services:
 ...
 ```
 
-in th local repositoty :
+in the local repositoty :
 ```shell script
 $ docker images 
 REPOSITORY                      TAG                 IMAGE ID       CREATED         SIZE
@@ -201,3 +201,74 @@ $ sudo systemctl restart filebeat.service
 ```
 
 reference : [Filebeat reference](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
+
+# 2. Database postgresql
+The postgresql database was used with a data initialization with some elite ultra-trailers, that's my sport ;-)
+
+## 2.1. Schema and data
+The list is in `./docker/postgres/db-postgres-2-data.sql` and the schema of this database is `./docker/postgres/db-postgres-1-schema.sql`
+The mail and password are some fake information but the other are public and they come from wikipedia.
+
+## 2.2. Configuration
+The config come from the docker image from version 12.5-alpine and the directory `/var/lib/posgtresql/data/postgresql.conf`.
+The config file is mount as a volume in order to make easily the configuration in development phase.
+
+The parameters that have been changed are mainly :
+```shell script
+log_directory = 'pg_log'	# directory where log files are written,
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'	# log file name pattern,
+log_line_prefix = '%m:%r:%u@%d:[%p] %e'		# special values:
+					#   %m = timestamp with milliseconds
+					#   %r = remote host name or IP address, and remote port
+					#   %u = user name
+					#   %d = database name
+					#   %p = process ID
+					#   %e = SQL state error code
+```
+
+## 2.3. Example of logs
+
+sample logs for the user list service :
+```log
+2021-04-11 17:12:09.187 CEST:yoda.local(50034):[unknown]@[unknown]:[917] 00000LOG:  connection received: host=yoda.local port=50034
+2021-04-11 17:12:09.187 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  connection authorized: user=postgres database=trailerplan
+2021-04-11 17:12:09.188 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  statement: SET TIME ZONE 'UTC'
+2021-04-11 17:12:09.188 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  duration: 0.115 ms
+2021-04-11 17:12:09.188 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  statement: 
+                    SELECT c.relname,
+                    CASE WHEN c.relispartition THEN 'p' WHEN c.relkind IN ('m', 'v') THEN 'v' ELSE 't' END
+                    FROM pg_catalog.pg_class c
+                    LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                    WHERE c.relkind IN ('f', 'm', 'p', 'r', 'v')
+                        AND n.nspname NOT IN ('pg_catalog', 'pg_toast')
+                        AND pg_catalog.pg_table_is_visible(c.oid)
+                
+2021-04-11 17:12:09.190 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  duration: 1.623 ms
+2021-04-11 17:12:09.192 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  statement: SELECT "django_migrations"."id", "django_migrations"."app", "django_migrations"."name", "django_migrations"."applied" FROM "django_migrations"
+2021-04-11 17:12:09.192 CEST:yoda.local(50034):postgres@trailerplan:[917] 00000LOG:  duration: 0.227 ms
+2021-04-11 17:12:22.751 CEST:yoda.local(50044):[unknown]@[unknown]:[918] 00000LOG:  connection received: host=yoda.local port=50044
+2021-04-11 17:12:22.752 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  connection authorized: user=postgres database=trailerplan
+2021-04-11 17:12:22.753 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  statement: SET TIME ZONE 'UTC'
+2021-04-11 17:12:22.753 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  duration: 0.149 ms
+2021-04-11 17:12:22.753 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  statement: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."username" = 'admin' LIMIT 21
+2021-04-11 17:12:22.754 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  duration: 1.400 ms
+2021-04-11 17:12:22.859 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  statement: SELECT "p_user"."id", "p_user"."civilite", "p_user"."first_name", "p_user"."last_name", "p_user"."sexe", "p_user"."birthday", "p_user"."mail", "p_user"."password", "p_user"."city", "p_user"."country" FROM "p_user" ORDER BY "p_user"."last_name" ASC
+2021-04-11 17:12:22.860 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  duration: 0.505 ms
+2021-04-11 17:12:22.861 CEST:yoda.local(50044):postgres@trailerplan:[918] 00000LOG:  disconnection: session time: 0:00:00.112 user=postgres database=trailerplan host=yoda.local port=50044
+```
+
+
+sample logs for the user's detail service :
+```log
+2021-04-11 11:16:50.637 CEST:yoda.local(46256):[unknown]@[unknown]:[192] 00000LOG:  connection received: host=yoda.local port=46256
+2021-04-11 11:16:50.638 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  connection authorized: user=postgres database=trailerplan
+2021-04-11 11:16:50.639 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  statement: SET TIME ZONE 'UTC'
+2021-04-11 11:16:50.639 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  duration: 0.242 ms
+2021-04-11 11:16:50.639 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  statement: SELECT "auth_user"."id", "auth_user"."password", "auth_user"."last_login", "auth_user"."is_superuser", "auth_user"."username", "auth_user"."first_name", "auth_user"."last_name", "auth_user"."email", "auth_user"."is_staff", "auth_user"."is_active", "auth_user"."date_joined" FROM "auth_user" WHERE "auth_user"."username" = 'admin' LIMIT 21
+2021-04-11 11:16:50.640 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  duration: 1.180 ms
+2021-04-11 11:16:50.742 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  statement: SELECT "p_user"."id", "p_user"."civilite", "p_user"."first_name", "p_user"."last_name", "p_user"."sexe", "p_user"."birthday", "p_user"."mail", "p_user"."password", "p_user"."city", "p_user"."country" FROM "p_user" WHERE ("p_user"."id" = 1 AND "p_user"."id" = 1) LIMIT 21
+2021-04-11 11:16:50.742 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  duration: 0.313 ms
+2021-04-11 11:16:50.744 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  disconnection: session time: 0:00:00.109 user=postgres database=trailerplan host=yoda.local port=46256
+```
+
+
