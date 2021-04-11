@@ -37,7 +37,7 @@ example of logs :
 
 NB:the time zone is CEST (UTC+1). But it is is +2 because it is summer time ;-)
 
-# 1.2. Settings
+## 1.2. Settings
 To access to the postgresql database it need his ip address ~/app_python/app_python/settings.py.
 The ip address of postgresql will be found by the docker network or the container postgresql.
 
@@ -95,11 +95,11 @@ the ip address can be found in :
 ```
 here it is : **172.21.0.2** ;-)
 
-## 1.2. Dockerfile
+## 1.3. Dockerfile
 This is a classic dockerfile from a python application, also from one of my other python projects in my repository ;-).
 The [dockerfile](./docker/app_python/Dockerfile)
 
-## 1.3. Docker compose
+## 1.4. Docker compose
 In the docker compose, the python application is launch by the service app_python. The image was defined in order to have the image name and tag in docker local repository.
 ```shell script
 ...
@@ -137,7 +137,7 @@ trailerplan/app-python_pg_elk   0.0.1               bd4af9000d01   38 hours ago 
 ...
 ```
 
-## 1.4 The parameters to customize the service 
+## 1.5. The parameters to customize the service 
 The parameters are in the file : `~/docker/config/env.dev`. [env.dev](./docker/config/env.dev)
 A use case will be to define another settings file for another platform (env.test, env.staging, env.prd, ...).
 
@@ -153,7 +153,7 @@ APP_RUNNING_SERVER_PORT=8001
 ...
 ```
 
-## 1.5. Filebeat
+## 1.6. Filebeat
 After installing filebeat (in my linux development environment), its configuration will be done in the local host for version 0.1.0 of this project.
 In another version, this will be done with a filebeat in a docker image.
  
