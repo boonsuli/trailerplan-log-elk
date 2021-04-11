@@ -138,8 +138,8 @@ trailerplan/app-python_pg_elk   0.0.1               bd4af9000d01   38 hours ago 
 ```
 
 ## 1.5. The parameters to customize the service 
-The parameters are in the file : `~/docker/config/env.dev`. [env.dev](./docker/config/env.dev)
-A use case will be to define another settings file for another platform (env.test, env.staging, env.prd, ...).
+The parameters are in the file : `~/docker/config/env.dev`. [env.dev](./docker/config/env.dev) <br>
+A classical use case is to define another settings file for another platform (env.test, env.staging, env.prd, ...).
 
 ```shell script
 ...
