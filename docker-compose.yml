@@ -1,0 +1,73 @@
+version: '3'
+
+volumes:
+  pg-data:
+  app-pyhon:
+
+networks:
+  postgres-network:
+    driver: bridge
+
+services:
+  app_python:
+    restart: always
+    image: ${APP_PROJECT}/${APP_SUB_PROJECT}:${APP_VERSION}
+    hostname: ${APP_HOSTNAME}
+    container_name: ${APP_CONTAINER_NAME}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    build:
+      context: .
+      dockerfile: ./docker/app_python/Dockerfile
+    env_file:
+      - ./docker/config/env.dev
+    volumes:
+      - ./app_python/:/app/
+    ports:
+      - "${APP_RUNNING_SERVER_PORT}:${APP_RUNNING_SERVER_PORT}"
+    command: python manage.py runserver 0.0.0.0:${APP_RUNNING_SERVER_PORT}
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
+
+  postgres:
+    restart: always
+    image: postgres:12.5-alpine
+    hostname: ${POSTGRES_HOSTNAME}
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: ${POSTGRES_DATA}
+    volumes:
+      - pg-data:${POSTGRES_DATA}
+      - ${INIT_DB_LOCAL_DIR}/${INIT_DB_SCHEMA}:${INIT_DB_DOCKER_DIR}/${INIT_DB_SCHEMA}
+      - ${INIT_DB_LOCAL_DIR}/${INIT_DB_DATA}:${INIT_DB_DOCKER_DIR}/${INIT_DB_DATA}
+      - ${INIT_DB_LOCAL_DIR}/${POSTGRES_CONF}:/${POSTGRES_DATA}/${POSTGRES_CONF}
+      - ${INIT_DB_LOG_LOCAL_DIR}:${POSTGRES_DATA}/${POSTGRES_LOG_DIR}
+    networks:
+      - postgres-network
+    ports:
+      - "5432:5432"
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+
+  elk:
+    restart: always
+    image: sebp/elk:7.10.2
+    hostname: elk-server2
+    container_name: elk-container2
+    environment:
+      ELASTIC_BOOTSTRAP_PASSWORD: ${ELK_ELASTIC_BOOTSTRAP_PASSWORD}
+      TS: ${ELK_TIME_ZONE}
+      ES_HEAP_SIZE: ${ELK_ES_HEAP_SIZE}
+    volumes:
+      - ./docker/elk/logstash/conf.d:${ELK_LOGSTASH_CONF_DIR}
+    ports:
+      - "5044:5044"
+      - "9200:9200"
+      - "5601:5601"
+    networks:
+      - postgres-network

@@ -1,0 +1,18 @@
+-- TRILERPLAN postgresql schema
+
+drop sequence if EXISTS P_USER_ID_SEQ;
+create sequence P_USER_ID_SEQ start with 1 increment by 1;
+
+drop table if exists P_USER cascade;
+create table P_USER (
+  ID SERIAL PRIMARY KEY NOT NULL,
+  CIVILITE VARCHAR (10) NOT NULL,
+  FIRST_NAME VARCHAR(20) NOT NULL,
+  LAST_NAME VARCHAR(20) NOT NULL,
+  SEXE VARCHAR (10) NOT NULL,
+  BIRTHDAY date NULL,
+  MAIL VARCHAR(50) NULL,
+  PASSWORD VARCHAR(20) NOT NULL,
+  CITY VARCHAR (20) NULL,
+  COUNTRY VARCHAR (20) NOT NULL
+);
