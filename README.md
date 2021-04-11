@@ -1,7 +1,7 @@
 desc:trailerplan with python django rest api app and postrgresql logging to elk stack
 
-TRAILERPLAN AS WITH POSTGRESQL AND LOGGING TO ELK 
-==============================================
+TRAILERPLAN APP WITH POSTGRESQL AND LOGGING TO ELK 
+==================================================
 
 This is the trailerplan project with a Python Django rest service using a postgresql database and logging
 (app python and pgsql) to the ELK stack. 
