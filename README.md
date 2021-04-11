@@ -9,13 +9,13 @@ It use filebeat to send the logs of the python application and postgresql to log
 There are 3 dockers containers run from docker compose.
 
 
-#1. Python application 
+# 1. Python application 
 The application is limited to the 'get by id' function and the 'get all' function of objects.
 In each function some logs were thrown with level debug, info, warn, error and critical.
 The logs are write in an file in log directory of the application.
 
 
-##1.1. Timestamp of the logs
+## 1.1. Timestamp of the logs
 The time zone will be change to your own ime zone here :<br>
 z = utc_offset_string(record.created)<br>
 to z = utc_offset_string(record.created, "America/New_York"), if your locl timezone is "America/New_York" ;-)
@@ -37,7 +37,7 @@ example of logs :
 
 NB:the time zone is CEST (UTC+1). But it is is +2 because it is summer time ;-)
 
-#1.2. Settings
+# 1.2. Settings
 To access to the postgresql database it need his ip address ~/app_python/app_python/settings.py.
 The ip address of postgresql will be found by the docker network or the container postgresql.
 
@@ -95,11 +95,11 @@ the ip address can be found in :
 ```
 here it is : **172.21.0.2** ;-)
 
-##1.2. Dockerfile
+## 1.2. Dockerfile
 This is a classic dockerfile from a python application, also from one of my other python projects in my repository ;-).
 The [dockerfile](./docker/app_python/Dockerfile)
 
-##1.3. Docker compose
+## 1.3. Docker compose
 In the docker compose, the python application is launch by the service app_python. The image was defined in order to have the image name and tag in docker local repository.
 ```shell script
 ...
@@ -137,7 +137,7 @@ trailerplan/app-python_pg_elk   0.0.1               bd4af9000d01   38 hours ago 
 ...
 ```
 
-##1.4 The parameters to customize the service 
+## 1.4 The parameters to customize the service 
 The parameters are in the file : `~/docker/config/env.dev`. [env.dev](./docker/config/env.dev)
 A use case will be to define another settings file for another platform (env.test, env.staging, env.prd, ...).
 
@@ -153,7 +153,7 @@ APP_RUNNING_SERVER_PORT=8001
 ...
 ```
 
-##1.4. Filebeat
+## 1.5. Filebeat
 After installing filebeat (in my linux development environment), its configuration will be done in the local host for version 0.1.0 of this project.
 In another version, this will be done with a filebeat in a docker image.
  
