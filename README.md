@@ -1,7 +1,5 @@
-desc:trailerplan with python django rest api app and postrgresql logging to elk stack
-
-TRAILERPLAN APP WITH POSTGRESQL AND LOGGING TO ELK 
-==================================================
+TRAILERPLAN APP WITH POSTGRESQL AND LOGGING TO ELK STACK 
+========================================================
 
 This is the trailerplan project with a Python Django rest service using a postgresql database and logging
 (app python and pgsql) to the ELK stack. 
@@ -199,6 +197,35 @@ NB: after updating the configuration don't forget to restart the service :
 ```shell script
 $ sudo systemctl restart filebeat.service
 ```
+
+## 1.7. Logs in Kibana
+After the fields are reindexed, we can see the logs for postgresql and the python app.
+![all logs](docs/images/kibanaLogsPgAndPythonApp.png)
+<br>
+we see the logs displayed with the filter
+![filter for the python app](docs/images/kibanaFilterPythonApp.png)
+![logs for the python app](docs/images/messageLogsPythonAppInKibana.png)
+
+the json view for an log:
+![json view of an log](docs/images/jsonLogsInKibana.png)
+
+The appplication log is in the json message in the following form. This was enabled with grok parsing 
+and the mutate function in the logstash configuration.
+```shell script
+...   
+  "app": {
+      "log": {
+        "level": "INFO",
+        "logger": "UserLogger",
+        "datetime": "2021-04-08T23:28:27.533120+2:00",
+        "message": "get user with id 4"
+      },
+      "env": "dev",
+      "release": "0.0.1",
+      "sprint": "Sprint100",
+    },
+...
+``` 
 
 reference : [Filebeat reference](https://www.elastic.co/guide/en/beats/filebeat/current/index.html)
 
