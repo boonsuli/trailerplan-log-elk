@@ -255,6 +255,8 @@ log_line_prefix = '%m:%r:%u@%d:[%p] %e'		# special values:
 
 ## 2.3. Example of logs
 
+The logs are in the directory specified in the config file, here it is  : `/var/lib/postgresql/data/pg_log` 
+
 sample logs for the user list service :
 ```log
 2021-04-11 17:12:09.187 CEST:yoda.local(50034):[unknown]@[unknown]:[917] 00000LOG:  connection received: host=yoda.local port=50034
@@ -298,4 +300,26 @@ sample logs for the user's detail service :
 2021-04-11 11:16:50.744 CEST:yoda.local(46256):postgres@trailerplan:[192] 00000LOG:  disconnection: session time: 0:00:00.109 user=postgres database=trailerplan host=yoda.local port=46256
 ```
 
+## 2.4. Filebeat
+In order to send the logs to logstash, filebeat is also used here. An settings was put in the filebeat configuration.
 
+filebeat settings:
+```shell script
+filebeat.inputs:
+
+- type: log
+  enabled: true
+  paths:
+    - [ABSOLUTE_PATH]/trailerplan-log-elk/app_python/log/*.log
+    - /var/lib/postgresql/data/pg_log/*.log
+...
+```
+
+## 2.5 ELK
+The logs are displayed in kibana and filter can be applied. 
+
+Filter:
+![filter in kibna for logs posgresql](docs/images/kibanaFilterPostgresDB.png)
+
+The logs:
+![logs postgres filtered](docs/images/messageLogsPostgresInKibana.png)
